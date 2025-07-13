@@ -1,0 +1,139 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CodeQuest AI</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <h1>Welcome to CodeQuest AI</h1>
+  <div>
+    <button onclick="window.location.href='quiz.html'">AI Quiz Generator</button>
+    <button onclick="window.location.href='challenge.html'">Daily Coding Challenge</button>
+  </div>
+</body>
+</html>
+
+<!-- quiz.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Quiz Generator</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <h2>Enter Topic for Quiz</h2>
+  <input type="text" id="topicInput" placeholder="e.g. OOP in Java">
+  <button onclick="generateQuiz()">Generate Quiz</button>
+  <div id="quizContainer"></div>
+
+  <script src="js/quiz.js"></script>
+</body>
+</html>
+
+<!-- challenge.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Coding Challenge</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <h2>Today's Coding Challenge</h2>
+  <div id="challengeContainer"></div>
+
+  <script src="js/challenge.js"></script>
+</body>
+</html>
+
+/* css/styles.css */
+body {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+button {
+  padding: 10px 15px;
+  margin: 10px;
+}
+
+/* js/quiz.js */
+async function generateQuiz() {
+  const topic = document.getElementById('topicInput').value;
+  const response = await fetch('/AIQuiz', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ topic })
+  });
+  const quiz = await response.json();
+  const container = document.getElementById('quizContainer');
+  container.innerHTML = quiz.questions.map((q, i) => `
+    <div>
+      <p>${i + 1}. ${q.question}</p>
+      ${q.options.map((opt, j) => `<label><input type="radio" name="q${i}" value="${opt}">${opt}</label><br>`).join('')}
+    </div>
+  `).join('');
+}
+
+/* js/challenge.js */
+fetch('/DailyChallenge')
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById('challengeContainer').innerText = data.challenge;
+  });
+
+// Java - AIQuizServlet.java
+@WebServlet("/AIQuiz")
+public class AIQuizServlet extends HttpServlet {
+  protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    BufferedReader reader = req.getReader();
+    String json = reader.lines().collect(Collectors.joining());
+    JSONObject input = new JSONObject(json);
+    String topic = input.getString("topic");
+
+    String payload = new JSONObject()
+      .put("model", "gpt-3.5-turbo")
+      .put("messages", new JSONArray()
+        .put(new JSONObject().put("role", "user")
+          .put("content", "Generate 3 MCQs with options and correct answers on topic: " + topic)))
+      .toString();
+
+    HttpRequest request = HttpRequest.newBuilder()
+      .uri(URI.create("https://api.openai.com/v1/chat/completions"))
+      .header("Authorization", "Bearer YOUR_API_KEY")
+      .header("Content-Type", "application/json")
+      .POST(HttpRequest.BodyPublishers.ofString(payload))
+      .build();
+
+    HttpClient client = HttpClient.newHttpClient();
+    HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+    JSONObject aiResponse = new JSONObject(response.body());
+    String content = aiResponse.getJSONArray("choices").getJSONObject(0).getJSONObject("message").getString("content");
+
+    JSONObject result = new JSONObject();
+    result.put("questions", parseQuiz(content));
+    resp.setContentType("application/json");
+    resp.getWriter().write(result.toString());
+  }
+
+  private JSONArray parseQuiz(String content) {
+    JSONArray arr = new JSONArray();
+    // Simplified parsing - expect content in predictable format
+    // Ideally parse lines to build question, options, answer
+    return arr;
+  }
+}
+
+// Java - DailyChallengeServlet.java
+@WebServlet("/DailyChallenge")
+public class DailyChallengeServlet extends HttpServlet {
+  protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    String challenge = "Write a Java program to reverse a linked list.";
+    JSONObject obj = new JSONObject();
+    obj.put("challenge", challenge);
+    resp.setContentType("application/json");
+    resp.getWriter().write(obj.toString());
+  }
+}
