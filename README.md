@@ -83,7 +83,6 @@ AI-Coding-Quiz-App/
 
 ## 📸 Preview
 
-![screenshot](https://via.placeholder.com/800x400?text=CodeQuest+AI+App+Preview)
 
 ---
 
@@ -93,4 +92,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ---
 
-## 🙌 Made with ❤️ by Abhishek Sharma, Nikhil Kumar, Sumit Kumar, Poushali Mitra
+## 🙌 Made with ❤️ by Abhishek Sharma, Nikhil Kumar Jha, Poushali Mitra, Sumit Kumar
