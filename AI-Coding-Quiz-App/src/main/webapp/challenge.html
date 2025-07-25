@@ -2,13 +2,665 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Daily Coding Challenge</title>
-  <link rel="stylesheet" href="css/styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Coding Challenge | CodeQuest AI</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Poppins:wght@300;400;600;700&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --primary: #6c63ff;
+      --secondary: #4d44db;
+      --dark: #1a1a2e;
+      --light: #f5f5f7;
+      --accent: #ff6584;
+      --success: #4caf50;
+      --warning: #ff9800;
+      --error: #f44336;
+      --code-bg: #282c34;
+      --text-color: #1a1a2e;
+      --bg-color: #f5f5f7;
+      --card-bg: #ffffff;
+    }
+
+    [data-theme="dark"] {
+      --text-color: #f5f5f7;
+      --bg-color: #1a1a2e;
+      --card-bg: #16213e;
+      --code-bg: #0d1117;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      padding-top: 80px;
+    }
+
+    header {
+      background-color: var(--card-bg);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 100;
+      padding: 15px 0;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+    }
+
+    .logo i {
+      margin-right: 10px;
+      color: var(--secondary);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 25px;
+    }
+
+    .nav-links a {
+      color: var(--text-color);
+      text-decoration: none;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-links a:hover {
+      color: var(--primary);
+    }
+
+    .challenge-header {
+      text-align: center;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .challenge-header h2 {
+      font-size: 36px;
+      margin-bottom: 15px;
+      color: var(--primary);
+    }
+
+    .challenge-meta {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      color: var(--text-color);
+      opacity: 0.8;
+      font-size: 14px;
+    }
+
+    .challenge-difficulty {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background-color: var(--primary);
+      color: white;
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .challenge-layout {
+      display: flex;
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+
+    .problem-panel {
+      flex: 1;
+      background-color: var(--card-bg);
+      border-radius: 12px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+      overflow-y: auto;
+      max-height: calc(100vh - 180px);
+      position: sticky;
+      top: 100px;
+    }
+
+    .editor-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .challenge-content {
+      margin-bottom: 30px;
+    }
+
+    .challenge-content h3 {
+      margin: 25px 0 15px;
+      color: var(--primary);
+    }
+
+    .challenge-content p {
+      margin-bottom: 15px;
+    }
+
+    .code-editor {
+      background-color: var(--code-bg);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .editor-header {
+      background-color: rgba(0, 0, 0, 0.2);
+      padding: 8px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .editor-title {
+      font-family: 'Fira Code', monospace;
+      color: #aaa;
+      font-size: 14px;
+    }
+
+    .editor-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .editor-btn {
+      background: none;
+      border: none;
+      color: #aaa;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .editor-btn:hover {
+      color: white;
+    }
+
+    .code-area {
+      width: 100%;
+      flex: 1;
+      background-color: var(--code-bg);
+      color: #abb2bf;
+      font-family: 'Fira Code', monospace;
+      padding: 15px;
+      border: none;
+      resize: none;
+      outline: none;
+      line-height: 1.5;
+      tab-size: 4;
+    }
+
+    .test-cases {
+      background-color: var(--card-bg);
+      border-radius: 8px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+
+    .test-cases h3 {
+      margin-bottom: 15px;
+    }
+
+    .test-case {
+      background-color: var(--bg-color);
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+
+    .test-case-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .test-case-title {
+      font-weight: 600;
+    }
+
+    .test-case-status {
+      padding: 3px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-pending {
+      background-color: #e0e0e0;
+      color: #616161;
+    }
+
+    .status-passed {
+      background-color: #e8f5e9;
+      color: var(--success);
+    }
+
+    .status-failed {
+      background-color: #ffebee;
+      color: var(--error);
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .btn {
+      padding: 12px 25px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--secondary);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(108, 99, 255, 0.3);
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+
+    .btn-outline:hover {
+      background-color: rgba(108, 99, 255, 0.1);
+    }
+
+    .theme-toggle {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+    }
+
+    .theme-toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 34px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--primary);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+
+    .daily-streak {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background-color: rgba(108, 99, 255, 0.1);
+      padding: 8px 15px;
+      border-radius: 20px;
+      margin-left: 20px;
+    }
+
+    .daily-streak i {
+      color: var(--warning);
+    }
+
+    .daily-streak span {
+      font-weight: 600;
+    }
+
+    @media (max-width: 1024px) {
+      .challenge-layout {
+        flex-direction: column;
+      }
+      
+      .problem-panel {
+        max-height: none;
+        position: static;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .nav-links {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .challenge-header h2 {
+        font-size: 28px;
+      }
+
+      .challenge-difficulty {
+        position: static;
+        margin: 0 auto 15px;
+        width: fit-content;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
 </head>
 <body>
-  <h2>Today's Coding Challenge</h2>
-  <div id="challengeContainer"></div>
+  <header>
+    <div class="container">
+      <div class="header-content">
+        <a href="index.html" class="logo">
+          <i class="fas fa-robot"></i>
+          <span>CodeQuest AI</span>
+        </a>
+        
+        <div class="nav-links">
+          <a href="index.html"><i class="fas fa-home"></i> Home</a>
+          <a href="quiz.html"><i class="fas fa-question-circle"></i> Quiz Generator</a>
+          <div class="daily-streak">
+            <i class="fas fa-fire"></i>
+            <span id="streak-count">5 day streak</span>
+          </div>
+          <label class="theme-toggle">
+            <input type="checkbox" id="theme-toggle">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </header>
 
-  <script src="js/challenge.js"></script>
+  <main class="container">
+    <div class="challenge-header">
+      <h2>Today's Coding Challenge</h2>
+      <div class="challenge-difficulty">Medium</div>
+      <div class="challenge-meta">
+        <span><i class="far fa-calendar-alt"></i> July 19, 2025</span>
+        <span><i class="far fa-clock"></i> 30 min avg</span>
+        <span><i class="fas fa-users"></i> 85% completion</span>
+      </div>
+    </div>
+
+    <div class="challenge-layout">
+      <div class="problem-panel">
+        <div class="challenge-content">
+          <h3>Palindrome Checker</h3>
+          <p>Write a function that checks if a given string is a palindrome. A palindrome is a word, phrase, number, or other sequence of characters that reads the same forward and backward (ignoring spaces, punctuation, and capitalization).</p>
+          
+          <h3>Requirements:</h3>
+          <ul style="margin-left: 20px; margin-bottom: 20px;">
+            <li>The function should return <code>true</code> if the input is a palindrome, <code>false</code> otherwise</li>
+            <li>Ignore non-alphanumeric characters</li>
+            <li>Case should be ignored</li>
+          </ul>
+
+          <h3>Example:</h3>
+          <div class="code-editor">
+            <div class="editor-header">
+              <div class="editor-title">Example Input/Output</div>
+            </div>
+            <pre style="padding: 15px; margin: 0; font-family: 'Fira Code', monospace;">
+Input: "A man, a plan, a canal: Panama"
+Output: true
+
+Input: "race a car"
+Output: false</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="editor-panel">
+        <div class="code-editor">
+          <div class="editor-header">
+            <div class="editor-title">solution.js</div>
+            <div class="editor-actions">
+              <button class="editor-btn"><i class="fas fa-redo"></i> Reset</button>
+              <button class="editor-btn"><i class="fas fa-copy"></i> Copy</button>
+            </div>
+          </div>
+          <textarea class="code-area" id="codeEditor" spellcheck="false">function isPalindrome(str) {
+  // Your code here
+}</textarea>
+        </div>
+
+        <div class="test-cases">
+          <h3>Test Cases</h3>
+          <div class="test-case">
+            <div class="test-case-header">
+              <div class="test-case-title">Basic Palindrome</div>
+              <div class="test-case-status status-pending">Pending</div>
+            </div>
+            <div>Input: "racecar"</div>
+            <div>Expected Output: true</div>
+          </div>
+          <div class="test-case">
+            <div class="test-case-header">
+              <div class="test-case-title">With Punctuation</div>
+              <div class="test-case-status status-pending">Pending</div>
+            </div>
+            <div>Input: "A man, a plan, a canal: Panama"</div>
+            <div>Expected Output: true</div>
+          </div>
+          <div class="test-case">
+            <div class="test-case-header">
+              <div class="test-case-title">Non-Palindrome</div>
+              <div class="test-case-status status-pending">Pending</div>
+            </div>
+            <div>Input: "hello world"</div>
+            <div>Expected Output: false</div>
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <button class="btn btn-primary" id="runBtn">
+            <i class="fas fa-play"></i> Run Code
+          </button>
+          <button class="btn btn-outline" id="hintBtn">
+            <i class="fas fa-lightbulb"></i> Get Hint
+          </button>
+          <button class="btn btn-outline" id="solutionBtn">
+            <i class="fas fa-eye"></i> View Solution
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Theme toggle functionality
+    const themeToggle = document.getElementById('theme-toggle');
+    const htmlElement = document.documentElement;
+
+    // Check for saved theme preference or use preferred color scheme
+    const savedTheme = localStorage.getItem('theme') || 
+                      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    
+    if (savedTheme === 'dark') {
+      htmlElement.setAttribute('data-theme', 'dark');
+      themeToggle.checked = true;
+    }
+
+    themeToggle.addEventListener('change', function() {
+      if (this.checked) {
+        htmlElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'dark');
+      } else {
+        htmlElement.removeAttribute('data-theme');
+        localStorage.setItem('theme', 'light');
+      }
+    });
+
+    // Simulate code execution
+    document.getElementById('runBtn').addEventListener('click', function() {
+      const testCases = document.querySelectorAll('.test-case');
+      const userCode = document.getElementById('codeEditor').value;
+      
+      // Try to execute the user's code
+      try {
+        // Create a function from the user's code
+        const func = new Function('str', userCode + '\nreturn isPalindrome(str);');
+        
+        // Define test cases with inputs and expected outputs
+        const testData = [
+          { input: 'racecar', expected: true },
+          { input: 'A man, a plan, a canal: Panama', expected: true },
+          { input: 'hello world', expected: false }
+        ];
+        
+        testCases.forEach((testCase, index) => {
+          const statusElement = testCase.querySelector('.test-case-status');
+          statusElement.classList.remove('status-pending', 'status-passed', 'status-failed');
+          
+          // Simulate processing delay
+          setTimeout(() => {
+            try {
+              const result = func(testData[index].input);
+              const isPassed = result === testData[index].expected;
+              
+              statusElement.textContent = isPassed ? 'Passed' : 'Failed';
+              statusElement.classList.add(isPassed ? 'status-passed' : 'status-failed');
+              
+              // If last test case, show completion message
+              if (index === testCases.length - 1) {
+                const allPassed = Array.from(testCases).every(
+                  tc => tc.querySelector('.test-case-status').textContent === 'Passed'
+                );
+                
+                if (allPassed) {
+                  alert('🎉 Congratulations! All test cases passed!');
+                  // Increment streak
+                  const streakElement = document.getElementById('streak-count');
+                  const currentStreak = parseInt(streakElement.textContent);
+                  streakElement.textContent = `${currentStreak + 1} day streak`;
+                }
+              }
+            } catch (e) {
+              statusElement.textContent = 'Error';
+              statusElement.classList.add('status-failed');
+              console.error('Test case error:', e);
+            }
+          }, 500 + (index * 300));
+        });
+      } catch (e) {
+        alert('❌ There was an error in your code: ' + e.message);
+        console.error('Code execution error:', e);
+      }
+    });
+
+    // Hint button functionality
+    document.getElementById('hintBtn').addEventListener('click', function() {
+      alert('💡 Hint: Try removing non-alphanumeric characters and converting to lowercase before comparing.');
+    });
+
+    // Solution button functionality
+    document.getElementById('solutionBtn').addEventListener('click', function() {
+      if (confirm('Are you sure you want to view the solution? This will reset your streak.')) {
+        document.getElementById('codeEditor').value = `function isPalindrome(str) {
+  // Remove non-alphanumeric characters and convert to lowercase
+  const cleaned = str.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+  // Compare with reversed string
+  return cleaned === cleaned.split('').reverse().join('');
+}`;
+        document.getElementById('streak-count').textContent = '0 day streak';
+      }
+    });
+
+    // Copy code functionality
+    document.querySelector('.editor-actions .fa-copy').parentElement.addEventListener('click', function() {
+      const codeEditor = document.getElementById('codeEditor');
+      codeEditor.select();
+      document.execCommand('copy');
+      
+      // Show copied notification
+      const originalText = this.innerHTML;
+      this.innerHTML = '<i class="fas fa-check"></i> Copied!';
+      setTimeout(() => {
+        this.innerHTML = originalText;
+      }, 2000);
+    });
+
+    // Reset code functionality
+    document.querySelector('.editor-actions .fa-redo').parentElement.addEventListener('click', function() {
+      if (confirm('Reset your code to the initial template?')) {
+        document.getElementById('codeEditor').value = `function isPalindrome(str) {
+  // Your code here
+}`;
+      }
+    });
+  </script>
 </body>
 </html>
